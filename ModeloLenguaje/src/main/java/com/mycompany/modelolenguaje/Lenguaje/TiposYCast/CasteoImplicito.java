@@ -10,7 +10,7 @@ public class CasteoImplicito {
 
     public static Object CAST_IMPLICITO(int tipoVar, int tipoAsig, Object valor) {
         switch (Tipo.values()[tipoVar]) {
-            case DOUBLE:
+            case DOUBLE -> {
                 if (tipoAsig == Tipo.CHAR.ordinal()) {
                     //return GET_CHAR_NUMERIC(String.valueOf(valor));
                 } else if (tipoAsig == Tipo.BOOLEAN.ordinal()) {
@@ -20,10 +20,11 @@ public class CasteoImplicito {
                 } else if (tipoAsig == Tipo.DOUBLE.ordinal()) {
                     return valor;
                 }
-                break;
-            case BOOLEAN:
+            }
+            case BOOLEAN -> {
                 return valor;
-            case STRING:
+            }
+            case STRING -> {
                 if (tipoAsig == Tipo.CHAR.ordinal()) {
                     return String.valueOf(valor);
                 } else if (tipoAsig == Tipo.BOOLEAN.ordinal()) {
@@ -34,7 +35,8 @@ public class CasteoImplicito {
                     return String.valueOf(valor);
                 }
                 return valor;
-            case INT:
+            }
+            case INT -> {
                 if (tipoAsig == Tipo.CHAR.ordinal()) {
                     //return GET_CHAR_NUMERIC(valor);
                 } else if (tipoAsig == Tipo.BOOLEAN.ordinal()) {
@@ -44,12 +46,13 @@ public class CasteoImplicito {
                 } else if (tipoAsig == Tipo.DOUBLE.ordinal()) {
                     //return Math.trunc(valor);
                 }
-                break;
-            case CHAR:
+            }
+            case CHAR -> {
                 if (tipoAsig == Tipo.INT.ordinal()) {
                     //return String.fromCharCode(valor);
                 }
                 return valor;
+            }
         }
         return null;
     }
