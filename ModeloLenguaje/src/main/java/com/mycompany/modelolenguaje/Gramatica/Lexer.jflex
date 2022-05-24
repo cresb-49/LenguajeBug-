@@ -8,7 +8,7 @@ import java_cup.runtime.*;
 %public
 %line
 %column
-//%cup
+%cup
 
 %{
     private int stringColumnInit = 0; 

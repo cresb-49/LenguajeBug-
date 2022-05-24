@@ -1,55 +1,19 @@
-package com.cresb49.serverproyecto1.analizarjava;
-
-import com.cresb49.serverproyecto1.analizarjava.objetos.*;
-import com.cresb49.serverproyecto1.consolecontrol.ConsoleControl;
+package com.mycompany.modelolenguaje.Gramatica;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java_cup.runtime.*;
 
-class ParserJava;
+class ParserBug;
 
 parser code {:
     // Connect this parser to a scanner!
 
     private static final String ERROR_TYPE_SIN = "Sintactico";
     private static final String ERROR_TYPE_SEM = "Semantico";
-
-    private LexerJava lexerJava;
-    private SimbolosTerminalesJava simbolosTerminalesJava;
-    private TablaSimbolos tablaSimbolos;
-    private ArrayList<Clase> clases;
-    private ArrayList<Metodo> metodos;
-    private ConsoleControl consola;
-    private String carpetaFuente;
-    private String archivoAnalizado;
-    private ArrayList<FilaTablaSymbolos> variablesDetectadas;
-    private ArrayList<String> funcionesClase;
     
-    public ParserJava (LexerJava lexerJava,TablaSimbolos tablaSimbolos,ArrayList<Clase> clases,ArrayList<Metodo> metodos){ 
-        super(lexerJava);
-        this.lexerJava=lexerJava;
-        this.tablaSimbolos = tablaSimbolos;
-        this.metodos = metodos;
-        this.clases = clases;
-        this.carpetaFuente=this.lexerJava.getCarpetaFunete();
-        this.archivoAnalizado=this.lexerJava.getArchivoAnalizado();
-        this.consola=this.lexerJava.getConsoleControl();
-        this.simbolosTerminalesJava = new SimbolosTerminalesJava();
-        this.variablesDetectadas = new ArrayList<>();
-        this.funcionesClase = new ArrayList<>();
-    }
-
-    public TablaSimbolos getTablaSimbolos(){
-        return this.tablaSimbolos;
-    }
-
-    public ArrayList<Clase> getClases() {
-        return this.clases;
-    }
-
-    public ArrayList<Metodo> getMetodos() {
-        return this.metodos;
+    public ParserBug (LexerBug lexerBug){ 
+        super(lexerBug);
     }
 
     public void report_error(String message, Object info) {
@@ -63,478 +27,204 @@ parser code {:
     public void syntax_error(Symbol cur_token) {
         Token tok = (Token) cur_token.value;
         if(tok!=null){
-            if (cur_token.sym == ParserJavaSym.EOF) {
-                String er = "Simbolo inesperado, se esperaba: "+ simbolosTerminalesJava.obtenerSimbolos(expected_token_ids()).toString();
-                //System.out.println("FIN ARCHIVO"+" "+er);
-                this.lexerJava.getErrors().add(consola.addLog(new ErrorAnalisis(ERROR_TYPE_SIN,"FIN ARCHIVO", cur_token.left, cur_token.right, er),carpetaFuente,archivoAnalizado));
-                //System.out.println(er);
+            if (cur_token.sym == ParserBugSym.EOF) {
+                String er = "Simbolo inesperado, se esperaba: "+ simbolosTerminalesBug.obtenerSimbolos(expected_token_ids()).toString();
             } else {
-                String er = "Simbolo inesperado, se esperaba: "+ simbolosTerminalesJava.obtenerSimbolos(expected_token_ids()).toString();
-                //System.out.println(tok.getLexema()+" "+er);
-                this.lexerJava.getErrors().add(consola.addLog(new ErrorAnalisis(ERROR_TYPE_SIN,tok.getLexema(), tok.getLinea(), tok.getColumna(), er),carpetaFuente,archivoAnalizado));
-                //System.out.println(er);
+                String er = "Simbolo inesperado, se esperaba: "+ simbolosTerminalesBug.obtenerSimbolos(expected_token_ids()).toString();
             }
         }else{
-            String er = "Simbolo inesperado, se esperaba: "+ simbolosTerminalesJava.obtenerSimbolos(expected_token_ids()).toString();
-            //System.out.println("FIN ARCHIVO"+" "+er);
-            this.lexerJava.getErrors().add(consola.addLog(new ErrorAnalisis(ERROR_TYPE_SIN,"FIN ARCHIVO", cur_token.left, cur_token.right, er),carpetaFuente,archivoAnalizado));
-            //System.out.println(er);
+            String er = "Simbolo inesperado, se esperaba: "+ simbolosTerminalesBug.obtenerSimbolos(expected_token_ids()).toString();
         }
     }
 
     public void unrecovered_syntax_error(Symbol cur_token) {
-        if (cur_token.sym == ParserJavaSym.EOF) {
+        if (cur_token.sym == ParserBugSym.EOF) {
             String er = "Error irrecuperable se llego al final del archivo";
-            //System.out.println("FIN ARCHIVO"+" "+er);
-            this.lexerJava.getErrors().add(consola.addLog(new ErrorAnalisis(ERROR_TYPE_SIN,"FIN ARCHIVO", cur_token.left, cur_token.right, er),carpetaFuente,archivoAnalizado));
-            //System.out.println(er);
         } else {
             Token tok = (Token) cur_token.value;
-            //String er = "Error irrecuperable, un posible simbolo esperado: "+ simbolosTerminalesJava.obtenerSimbolos(expected_token_ids()).toString();
             String er = "Error irrecuperable resuelva el error anterior";
-            //System.out.println(tok.getLexema()+" "+er);
-            this.lexerJava.getErrors().add(consola.addLog(new ErrorAnalisis(ERROR_TYPE_SIN, tok.getLexema(), tok.getLinea(), tok.getColumna(), er),carpetaFuente,archivoAnalizado));
-            //System.out.println(er);
         }
-    }
-
-    private void error_cast(Token operador,String tipo1,String tipo2){
-        semantic_error(operador,"No se puede operar un valor: \""+tipo1+"\" con un valor:\""+tipo2+"\"");
     }
 
     private void semantic_error(Token token,String contexto) {
-        this.lexerJava.getErrors().add(consola.addLog(new ErrorAnalisis(ERROR_TYPE_SEM,token.getLexema(), token.getLinea(), token.getColumna(), contexto),carpetaFuente,archivoAnalizado));
-    }
 
-    private void error_exprecion(Token ref, Asignacion r, String expected) {
-        if(r!=null){
-            String tipo = ((r.getTipo().equals(TablaSimbolos.COMODIN))?"Objeto/Funcion/Variable":r.getTipo());
-            String error = "No se puede operar \""+tipo+" "+ref.getLexema()+"\" valores posibles a evaluar con \""+ref.getLexema()+"\" son -> "+expected;
-            this.lexerJava.getErrors().add(consola.addLog(new ErrorAnalisis(ERROR_TYPE_SEM,ref.getLexema(), ref.getLinea(), ref.getColumna(), error),carpetaFuente,archivoAnalizado));
-        }
-    }
-
-    private void error_exprecionIzquierda(Token ref, Asignacion r, String expected) {
-        if(r!=null){
-            String tipo = ((r.getTipo().equals(TablaSimbolos.COMODIN))?"Objeto/Funcion/Variable":r.getTipo());
-            String error = "No se puede operar \""+ref.getLexema()+" "+tipo+"\" valores posibles a evaluar con \""+ref.getLexema()+"\" son -> "+expected;
-            this.lexerJava.getErrors().add(consola.addLog(new ErrorAnalisis(ERROR_TYPE_SEM,ref.getLexema(), ref.getLinea(), ref.getColumna(), error),carpetaFuente,archivoAnalizado));
-        }
-    }
-
-    private void error_exprecion2(Token ref, Asignacion r1,Asignacion r2, String expected) {
-        if(r1!=null && r2!=null){
-            String tipo1 = ((r1.getTipo().equals(TablaSimbolos.COMODIN))?"Objeto/Funcion/Variable":r1.getTipo());
-            String tipo2 = ((r2.getTipo().equals(TablaSimbolos.COMODIN))?"Objeto/Funcion/Variable":r2.getTipo());
-            String error = "No se puede operar \""+tipo1+" "+ref.getLexema()+" "+tipo2+"\"";
-            this.lexerJava.getErrors().add(consola.addLog(new ErrorAnalisis(ERROR_TYPE_SEM,ref.getLexema(), ref.getLinea(), ref.getColumna(), error),carpetaFuente,archivoAnalizado));
-        }
-    }   
-
-    private void error_comparacion(Token ref, Asignacion r1,Asignacion r2) {
-        if(r1!=null && r2!=null){
-            String tipo1 = ((r1.getTipo().equals(TablaSimbolos.COMODIN))?"Objeto/Funcion/Variable":r1.getTipo());
-            String tipo2 = ((r2.getTipo().equals(TablaSimbolos.COMODIN))?"Objeto/Funcion/Variable":r2.getTipo());
-            String error = "No se puede operar \""+tipo1+" "+ref.getLexema()+" "+tipo2+"\" debe evaluar datos del mismo tipo";
-            this.lexerJava.getErrors().add(consola.addLog(new ErrorAnalisis(ERROR_TYPE_SEM,ref.getLexema(), ref.getLinea(), ref.getColumna(), error),carpetaFuente,archivoAnalizado));
-        }
-    }
-
-    private void error_and_or(Token ref, Asignacion r1,Asignacion r2) {
-        if(r1!=null && r2!=null){
-            String tipo1 = ((r1.getTipo().equals(TablaSimbolos.COMODIN))?"Objeto/Funcion/Variable":r1.getTipo());
-            String tipo2 = ((r2.getTipo().equals(TablaSimbolos.COMODIN))?"Objeto/Funcion/Variable":r2.getTipo());
-            String error = "No se puede operar \""+tipo1+" "+ref.getLexema()+" "+tipo2+"\" debe evaluar datos del tipo booleano";
-            this.lexerJava.getErrors().add(consola.addLog(new ErrorAnalisis(ERROR_TYPE_SEM,ref.getLexema(), ref.getLinea(), ref.getColumna(), error),carpetaFuente,archivoAnalizado));
-        }
-    }
-
-    private void verificarForInit(Token ref, Asignacion asig) {
-        if(asig!=null){
-            if(!(asig.getTipo().equals(TablaSimbolos.INT)||asig.getTipo().equals(TablaSimbolos.COMODIN)||asig.getTipo().equals(TablaSimbolos.VARIABLE))){
-                String error = "La asignacion \""+ref.getLexema()+" "+asig.getTipo()+"\" no es valida debe de ser una asignacion entera";
-                this.lexerJava.getErrors().add(consola.addLog(new ErrorAnalisis(ERROR_TYPE_SEM,"Valor Asignacion for", ref.getLinea(), ref.getColumna()+1, error),carpetaFuente,archivoAnalizado));
-            }
-        }
-    }
-    private void verificarExprecionBool(Token ref, Asignacion asig) {
-        if(asig!=null){
-            if(!(asig.getTipo().equals(TablaSimbolos.BOOLEAN)||asig.getTipo().equals(TablaSimbolos.COMODIN)||asig.getTipo().equals(TablaSimbolos.VARIABLE))){
-                String error = "El valor del condicional debe ser de tipo boolean valor actual -> "+asig.getTipo();
-                this.lexerJava.getErrors().add(consola.addLog(new ErrorAnalisis(ERROR_TYPE_SEM,"Valor Condicional", ref.getLinea(), ref.getColumna()+1, error),carpetaFuente,archivoAnalizado));
-            }
-        }
-    }
-
-    private void agregarVariablesTabla(String metodo_clase, ArrayList<FilaTablaSymbolos> vars) {
-        if(metodo_clase!=null && vars != null){            
-            vars.forEach(var -> {
-                var.agregarFuncion(metodo_clase);
-                tablaSimbolos.getFilas().add(var);
-            });
-        }
-    }
-
-    private void asignarTipoVariable(Asignacion t, ArrayList<FilaTablaSymbolos> vars) {
-        if(t!=null && vars!=null){
-            for (FilaTablaSymbolos var : vars) {
-                if(var!=null){
-                    var.setTipo(t.getTipo());
-                }
-            }
-        }
-    }
-
-    private void asignarTipoVariableYCargarVariables(Asignacion t, ArrayList<FilaTablaSymbolos> vars) {
-        Collections.reverse(vars);
-        if(t!=null && vars!=null){
-            for (FilaTablaSymbolos var : vars) {
-                if(var!=null){
-                    var.setTipo(t.getTipo());
-                    variablesDetectadas.add(var);
-                }
-            }
-        }
-    }
-
-    private void cargarVariables(ArrayList<FilaTablaSymbolos> vars) {
-        Collections.reverse(vars);
-        if(vars!=null){
-            for (FilaTablaSymbolos var : vars) {
-                if(var!=null){
-                    variablesDetectadas.add(var);
-                }
-            }
-        }
-    }
-
-    private void agregarVariablesDetectadas(String metodoFuente) {
-        variablesDetectadas.forEach(variablesDetectada -> {
-            ArrayList<String> funciones = new ArrayList<>();
-            funciones.add(metodoFuente);
-            variablesDetectada.setFunciones(funciones);
-            tablaSimbolos.getFilas().add(variablesDetectada);
-        });
-        variablesDetectadas.clear();
-    }
-
-    private ArrayList<FilaTablaSymbolos> retornarDosFuentes(ArrayList<FilaTablaSymbolos> vars, ArrayList<FilaTablaSymbolos> vars1) {
-        if(vars!=null){
-            if(vars1!=null){
-                vars1.addAll(vars);
-                return vars1;
-            }else{
-                return vars;
-            }
-        }else{
-            if(vars1!=null){
-                return vars1;
-            }else{
-                return new ArrayList<>();
-            }
-        }
-    }
-
-    private void agregarMetodoEncontrado(Metodo metodo, ArrayList<FilaTablaSymbolos> vars) {
-        if(metodo!=null){
-            this.getMetodos().add(metodo);
-            this.funcionesClase.add(metodo.getNombre());
-            //Convertir las variables encontradas de FilaTablasSymbolos a Parametros
-            ArrayList<Parametros> p = new ArrayList<>();
-            if(vars!=null){
-                vars.forEach(var -> {p.add(new Parametros(var.getNombre(), var.getTipo()));});
-            }
-            metodo.setParametros(p);
-        }
-        //System.out.println(metodo.toString());
-    }
-
-    private void agregarClase(String nombre) {
-        if(nombre!=null){
-            ArrayList<String> tmpM = new ArrayList<>();
-            this.funcionesClase.forEach(string -> {tmpM.add(string);});
-            Clase tmp = new Clase(nombre,tmpM);
-            this.getClases().add(tmp);
-        }
-        this.funcionesClase.clear();
-    }
-
-    protected int error_sync_size() {
-		return 1;
-	}
-
-    private Asignacion validarMasMasMenosMenos(Asignacion r,Token ref) {
-        Asignacion result = null;
-        if(r!=null){
-            if(!OperacionCast.validSumarRestar(r)){
-                result = new Asignacion(TablaSimbolos.ERROR,TablaSimbolos.ERROR,false);
-                error_exprecion(ref,r,OperacionCast.expectedSumaRestar());
-            }else{
-                result = new Asignacion(r.getTipo(),r.getClase(),r.isConstante());
-            }
-        }else{
-            result = new Asignacion(TablaSimbolos.ERROR,TablaSimbolos.ERROR,false);
-        }
-        return result;
-    }
-
-    private Asignacion validarNegacion(Asignacion r,Token ref){
-        Asignacion result = null;
-        if(r!=null){
-            if(!OperacionCast.validUniariBool(r)){
-                result = new Asignacion(TablaSimbolos.ERROR,TablaSimbolos.ERROR,false); 
-                error_exprecionIzquierda(ref,r,OperacionCast.expectedUniariBool());
-            }else{
-                result = new Asignacion(r.getTipo(),r.getClase(),r.isConstante());
-            }
-        }else{
-            result = new Asignacion(TablaSimbolos.ERROR,TablaSimbolos.ERROR,false);
-        }
-        return result;
-    }
-
-    private Asignacion validarPositivoNegativo(Asignacion r,Token ref){
-        Asignacion result = null;
-        if(r!=null){
-            if(!OperacionCast.validUniariNegPosi(r)){
-                result = new Asignacion(TablaSimbolos.ERROR,TablaSimbolos.ERROR,false); 
-                error_exprecionIzquierda(ref,r,OperacionCast.expectedUnariNegPosi());
-            }else{
-                result = new Asignacion(r.getTipo(),r.getClase(),r.isConstante());
-            }
-        }else{
-            result = new Asignacion(TablaSimbolos.ERROR,TablaSimbolos.ERROR,false);
-        }
-        return result;
-    }
-
-    private Asignacion validarMultiDivicion(Asignacion r1,Asignacion r2,Token ref){
-        Asignacion result = null;
-        if(r1!=null && r2!=null){
-            if(OperacionCast.newTypeResMulDiv(r1,r2).equals(TablaSimbolos.ERROR)){
-                result = new Asignacion(TablaSimbolos.ERROR,TablaSimbolos.ERROR,false); 
-                error_exprecion2(ref,r1,r2,OperacionCast.expectedResMulDiv());
-            }else{
-                boolean constante = true;
-                if(r1.getTipo().equals(TablaSimbolos.COMODIN)||r1.getTipo().equals(TablaSimbolos.VARIABLE)){
-                    constante = false;
-                }
-                if(r2.getTipo().equals(TablaSimbolos.COMODIN)||r2.getTipo().equals(TablaSimbolos.VARIABLE)){
-                    constante = false;
-                }
-                result = new Asignacion(OperacionCast.newTypeResMulDiv(r1,r2),OperacionCast.newTypeResMulDiv(r1,r2),constante);
-            }
-        }else{
-            result = new Asignacion(TablaSimbolos.ERROR,TablaSimbolos.ERROR,false);
-        }
-        return result;
-    }
-
-    private Asignacion validarSuma(Asignacion r1,Asignacion r2,Token ref){
-        Asignacion result = null;
-        if(r1!=null && r2!=null){
-            if(OperacionCast.newTypeSum(r1,r2).equals(TablaSimbolos.ERROR)){
-                result = new Asignacion(TablaSimbolos.ERROR,TablaSimbolos.ERROR); 
-                error_exprecion2(ref,r1,r2,OperacionCast.expectedSum());
-            }else{
-                boolean constante = true;
-                if(r1.getTipo().equals(TablaSimbolos.COMODIN)||r1.getTipo().equals(TablaSimbolos.VARIABLE)){
-                    constante = false;
-                }
-                if(r2.getTipo().equals(TablaSimbolos.COMODIN)||r2.getTipo().equals(TablaSimbolos.VARIABLE)){
-                    constante = false;
-                }
-                result = new Asignacion(OperacionCast.newTypeSum(r1,r2),OperacionCast.newTypeSum(r1,r2),constante);
-            }
-        }else{
-            result = new Asignacion(TablaSimbolos.ERROR,TablaSimbolos.ERROR,false);
-        }
-        return result;
-    }
-
-    private Asignacion validarResta(Asignacion r1,Asignacion r2,Token ref){
-        Asignacion result = null;
-        if(r1!=null && r2!=null){
-            if(OperacionCast.newTypeResMulDiv(r1,r2).equals(TablaSimbolos.ERROR)){
-                result = new Asignacion(TablaSimbolos.ERROR,TablaSimbolos.ERROR); 
-                error_exprecion2(ref,r1,r2,OperacionCast.expectedResMulDiv());
-            }else{
-                boolean constante = true;
-                if(r1.getTipo().equals(TablaSimbolos.COMODIN)||r1.getTipo().equals(TablaSimbolos.VARIABLE)){
-                    constante = false;
-                }
-                if(r2.getTipo().equals(TablaSimbolos.COMODIN)||r2.getTipo().equals(TablaSimbolos.VARIABLE)){
-                    constante = false;
-                }
-                result = new Asignacion(OperacionCast.newTypeResMulDiv(r1,r2),OperacionCast.newTypeResMulDiv(r1,r2),constante);
-            }
-        }else{
-            result = new Asignacion(TablaSimbolos.ERROR,TablaSimbolos.ERROR,false);
-        }
-        return result;
-    }
-
-    private Asignacion validarMenorMayor(Asignacion r1,Asignacion r2,Token ref){
-        Asignacion result = null;
-        if(r1!=null && r2!=null){
-            if(OperacionCast.newMayorMenor(r1,r2).equals(TablaSimbolos.ERROR)){
-                result = new Asignacion(TablaSimbolos.ERROR,TablaSimbolos.ERROR,false);
-                error_exprecion2(ref,r1,r2,OperacionCast.expectedResMulDiv());
-            }else{
-                boolean constante = true;
-                if(r1.getTipo().equals(TablaSimbolos.COMODIN)||r1.getTipo().equals(TablaSimbolos.VARIABLE)){
-                    constante = false;
-                }
-                if(r2.getTipo().equals(TablaSimbolos.COMODIN)||r2.getTipo().equals(TablaSimbolos.VARIABLE)){
-                    constante = false;
-                }
-                result = new Asignacion(OperacionCast.newMayorMenor(r1,r2),OperacionCast.newMayorMenor(r1,r2),constante);
-            }
-        }else{
-            result = new Asignacion(TablaSimbolos.ERROR,TablaSimbolos.ERROR,false);
-        }
-        return result;
-    }
-
-    private Asignacion validarComparaciones(Asignacion r1,Asignacion r2,Token ref){
-        Asignacion result = null;
-        if(r1!=null && r2!=null){
-            if(OperacionCast.newComparacion(r1,r2).equals(TablaSimbolos.ERROR)){
-                result = new Asignacion(TablaSimbolos.ERROR,TablaSimbolos.ERROR,false); 
-                error_comparacion(ref,r1,r2);
-            }else{
-                boolean constante = true;
-                if(r1.getTipo().equals(TablaSimbolos.COMODIN)||r1.getTipo().equals(TablaSimbolos.VARIABLE)){
-                    constante = false;
-                }
-                if(r2.getTipo().equals(TablaSimbolos.COMODIN)||r2.getTipo().equals(TablaSimbolos.VARIABLE)){
-                    constante = false;
-                }
-                result = new Asignacion(OperacionCast.newComparacion(r1,r2),OperacionCast.newComparacion(r1,r2),constante);
-            }
-        }else{
-            result = new Asignacion(TablaSimbolos.ERROR,TablaSimbolos.ERROR,false);
-        }
-        return result;
-    }
-
-    private Asignacion validarAndOr(Asignacion r1,Asignacion r2,Token ref){
-        Asignacion result = null;
-        if(r1!=null && r2!=null){
-            if(OperacionCast.newAndOr(r1,r2).equals(TablaSimbolos.ERROR)){
-                result = new Asignacion(TablaSimbolos.ERROR,TablaSimbolos.ERROR,false); 
-                error_and_or(ref,r1,r2);
-            }else{
-                boolean constante = true;
-                if(r1.getTipo().equals(TablaSimbolos.COMODIN)||r1.getTipo().equals(TablaSimbolos.VARIABLE)){
-                    constante = false;
-                }
-                if(r2.getTipo().equals(TablaSimbolos.COMODIN)||r2.getTipo().equals(TablaSimbolos.VARIABLE)){
-                    constante = false;
-                }
-                result = new Asignacion(OperacionCast.newAndOr(r1,r2),OperacionCast.newAndOr(r1,r2),constante);
-            }
-        }else{
-            result = new Asignacion(TablaSimbolos.ERROR,TablaSimbolos.ERROR,false);
-        }
-        return result;
-    }
-
-    private void validarExprecionCase(Asignacion valCase, Token ref) {
-        if(valCase!=null){
-            String tipo = valCase.getTipo();
-            switch(tipo){
-                case TablaSimbolos.CHAR:
-                    /*TIPO DE DATO CORRECTO*/
-                    /*
-                    if(!valCase.isConstante()){
-                        String error = "Error en valor de case, el dato debe ser de tipo -> [String,char,int]";
-                        this.lexerJava.getErrors().add(consola.addLog(new ErrorAnalisis(ERROR_TYPE_SEM,ref.getLexema()+" -> error :", ref.getLinea(), ref.getColumna()+1, error),carpetaFuente,archivoAnalizado));
-                    }
-                    */
-                    break;
-                case TablaSimbolos.STRING:
-                    /*TIPO DE DATO CORRECTO*/
-                    break;
-                case TablaSimbolos.INT:
-                    /*TIPO DE DATO CORRECTO*/
-                case TablaSimbolos.VARIABLE:
-                    /*TIPO DE DATO CORRECTO*/
-                    break;
-                default:
-                    /*DECLARAR ERRORES*/
-                    String error = "Error en valor de case, el dato debe ser de tipo -> [String,char,int]";
-                    this.lexerJava.getErrors().add(consola.addLog(new ErrorAnalisis(ERROR_TYPE_SEM,ref.getLexema()+" -> error :", ref.getLinea(), ref.getColumna()+1, error),carpetaFuente,archivoAnalizado));
-            }
-        }
-    }
-
-    private void validarExprecionSwitch(Asignacion valSwi, Token ref) {
-        if(valSwi!=null){
-            String tipo = valSwi.getTipo();
-            switch(tipo){
-                case TablaSimbolos.CHAR:
-                    /*TIPO DE DATO CORRECTO*/
-                    break;
-                case TablaSimbolos.STRING:
-                    /*TIPO DE DATO CORRECTO*/
-                    break;
-                case TablaSimbolos.INT:
-                    /*TIPO DE DATO CORRECTO*/
-                    break;
-                case TablaSimbolos.VARIABLE:
-                    /*TIPO DE DATO CORRECTO*/
-                    break;
-                case TablaSimbolos.COMODIN:
-                    /*TIPO DE DATO CORRECTO*/
-                    break;
-                default:
-                    /*DECLARAR ERRORES*/
-                    String error = "Error en switch solo se puede procesar datos tipo -> [String,char,int]";
-                    this.lexerJava.getErrors().add(consola.addLog(new ErrorAnalisis(ERROR_TYPE_SEM,"switch( -> error )", ref.getLinea(), ref.getColumna()+1, error),carpetaFuente,archivoAnalizado));
-            }
-        }
     }
 :}
 
 /* define how to connect to the scanner! */
-//scan with {: return this.lexerJava.next_token(); :};
+//scan with {: return this.LexerBug.next_token(); :};
 
 /* Terminals (tokens returned by the scanner). */
 terminal Token  ERROR;
-terminal Token  MAS,MENOS,MUL,DIV,MOD,UMINUS;
-terminal Token  PAR_A,PAR_C,COR_A,COR_C,SEMICOLON,COMA;
+terminal Token  PRINT;
+terminal Token  INT,DOUBLE,BOOL,STRING,CHAR,VOID;
+terminal Token  MAS,MENOS,MUL,DIV,MOD,POT,UMINUS,MAQ,MEQ,MAI,MEI,AND,OR,XOR,NOT,INCER,EQUAL,DIF;
+terminal Token  PAR_A,PAR_C,COR_A,COR_C,LL_A,LL_C,SEMICOLON,COMA;
 terminal Token  ENTERO,DECIMAL,CADENA,CARACTER,TRUE,FALSE;
+terminal Token  ID;
+terminal Token  FOR,WHILE,IF;
 
 
 /* Non terminals */
-non terminal            exp;
+non terminal            inicio,exp,f,tipoDato,funcion,parametros,enviar,intrucciones;
+non terminal            sentencias,instruc,print,para,si,mientras;
 
 /* Precedences */
-precedence left MAS, MENOS;
-precedence left MUL, DIV, MOD;
-precedence left UMINUS;
+
+precedence left     MAS, MENOS;
+precedence left     MUL, DIV, MOD;
+precedence right    POT;
+precedence left     UMINUS;
+precedence nonassoc MEQ,MAQ,MEI,MAI,EQUAL,DIF,INCER;
+precedence left     OR;
+precedence left     XOR;
+precedence left     AND;
+precedence left     NOT;
 
 
 /* Inicio de las reglas gramticales*/
 
-init    ::= exp
+inicio    ::= intrucciones
 ;
 
-exp     ::= exp MAS exp
+intrucciones    ::= intrucciones funcion
+                |   funcion
+;
+
+funcion ::= tipoDato ID PAR_A PAR_C LL_A LL_C
+        |   tipoDato ID PAR_A PAR_C LL_A sentencias LL_C
+        |   tipoDato ID PAR_A parametros PAR_C LL_A LL_C
+;
+
+sentencias  ::= sentencias instruc
+            |   instruc
+;
+
+instruc ::= print
+        |   para
+        |   mientras
+        |   si
+;
+
+si      ::= IF PAR_A exp PAR_C LL_A sentencias LL_C
+        |   IF PAR_A exp PAR_C LL_A LL_C
+;
+
+mientras    ::= WHILE PAR_A exp PAR_C LL_A sentencias LL_C
+            |   WHILE PAR_A exp PAR_C LL_A LL_C
+;
+
+para    ::= FOR PAR_A PAR_C LL_A sentencias LL_C
+        |   FOR PAR_A PAR_C LL_A LL_C
+;
+
+print   ::= PRINT PAR_A exp PAR_C SEMICOLON
+        |   PRINT PAR_A exp COMA enviar PAR_C SEMICOLON
+;
+
+parametros  ::= parametros COMA tipoDato ID
+            |   tipoDato ID
+;
+
+enviar  ::= enviar COMA exp
+        |   exp
+;
+
+tipoDato    ::= INT
+            |   STRING
+            |   CHAR
+            |   DOUBLE
+            |   BOOL
+            |   VOID
+;
+exp     ::= MENOS exp
+        {:
+        :}
+        %prec UMINUS
+        |   exp MAS exp
+        {:
+        :}
         |   exp MENOS exp
-        |   exp MUL exp
+        {:
+        :}
         |   exp DIV exp
+        {:
+        :}
+        |   exp POT exp
+        {:
+        :}
+        |   exp MUL exp
+        {:
+        :}
         |   exp MOD exp
+        {:
+        :}
+        |   exp MAQ exp
+        {:
+        :}
+        |   exp MEQ exp
+        {:
+        :}
+        |   exp MAI exp
+        {:
+        :}
+        |   exp MEI exp
+        {:
+        :}
+        |   exp DIF exp
+        {:
+        :}
+        |   exp EQUAL exp
+        {:
+        :}
+        |   exp INCER exp
+        {:
+        :}
+        |   exp OR exp
+        {:
+        :}
+        |   exp XOR exp
+        {:
+        :}
+        |   exp AND exp
+        {:
+        :}
+        |   NOT exp
+        {:
+        :}
         |   f
+        {:
+        :}
 ;
 
 f       ::= PAR_A exp PAR_C
-        |   MENOS exp %prec UMINUS
+        {:
+        :}
         |   ENTERO
+        {:
+        :}
         |   DECIMAL
+        {:
+        :}
         |   CADENA
+        {:
+        :}
         |   CARACTER
+        {:
+        :}
         |   TRUE
+        {:
+        :}
         |   FALSE
+        {:
+        :}
+        |   ID
+        {:
+        :}
+        |   ID PAR_A PAR_C
+        {:
+        :}
+        |   ID PAR_A enviar PAR_C
+        {:
+        :}
 ;

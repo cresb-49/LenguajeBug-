@@ -83,7 +83,7 @@ public class MainFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         LexerBug lexerBug = new LexerBug(new StringReader(this.jTextArea1.getText()));
         try {
-            lexerBug.yylex();
+            lexerBug.next_token();
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }

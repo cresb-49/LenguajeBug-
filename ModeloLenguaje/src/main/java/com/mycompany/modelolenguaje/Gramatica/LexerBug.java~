@@ -9,7 +9,7 @@ import java_cup.runtime.*;
 
 // See https://github.com/jflex-de/jflex/issues/222
 @SuppressWarnings("FallThrough")
-public class LexerBug {
+public class LexerBug implements java_cup.runtime.Scanner {
 
   /** This character denotes the end of file. */
   public static final int YYEOF = -1;
@@ -554,7 +554,6 @@ public class LexerBug {
   private boolean zzAtBOL = true;
 
   /** Whether the user-EOF-code has already been executed. */
-  @SuppressWarnings("unused")
   private boolean zzEOFDone;
 
   /* user code: */
@@ -814,6 +813,18 @@ public class LexerBug {
   }
 
 
+  /**
+   * Contains user EOF-code, which will be executed exactly once,
+   * when the end of file is reached
+   */
+  private void zzDoEOF() throws java.io.IOException {
+    if (!zzEOFDone) {
+      zzEOFDone = true;
+    
+  yyclose();    }
+  }
+
+
 
 
   /**
@@ -823,7 +834,7 @@ public class LexerBug {
    * @return the next token.
    * @exception java.io.IOException if any I/O-Error occurs.
    */
-  public Yytoken yylex() throws java.io.IOException {
+  @Override  public java_cup.runtime.Symbol next_token() throws java.io.IOException {
     int zzInput;
     int zzAction;
 
@@ -959,7 +970,8 @@ public class LexerBug {
 
       if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
         zzAtEOF = true;
-          {     this.actual = new Token((yyline+1),(yycolumn+1),yytext(),"EOF");
+            zzDoEOF();
+          {     this.actual = new Token((yyline+1),(yycolumn+1),"EOF","EOF");
     System.out.println(this.actual.toString());
     throw new Error("Fin del analisis lexico");
     //return new java_cup.runtime.Symbol(ParserJavaSym.EOF,yyline+1,yycolumn+1,this.actual);
