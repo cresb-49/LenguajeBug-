@@ -80,7 +80,6 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
         LexerBug lexerBug = new LexerBug(new StringReader(this.jTextArea1.getText()));
         try {
             lexerBug.next_token();

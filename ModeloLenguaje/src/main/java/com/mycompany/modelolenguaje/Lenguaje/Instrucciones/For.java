@@ -13,6 +13,10 @@ import com.mycompany.modelolenguaje.Lenguaje.Almacenamiento.Scope;
  * @author carlo
  */
 public class For extends Instruccion{
+    
+    public static final int SUMAR = 0;
+    public static final int RESTAR = 1;
+    
     private String varIterator;
     private Exprecion valVar;
     private Exprecion condicional;

@@ -13,45 +13,48 @@ public class ParserBugSym {
   public static final int CHAR = 8;
   public static final int MAI = 19;
   public static final int UMINUS = 16;
-  public static final int ENTERO = 36;
+  public static final int ENTERO = 39;
   public static final int XOR = 23;
   public static final int DOUBLE = 5;
+  public static final int SUMAR = 29;
   public static final int INT = 4;
-  public static final int FOR = 43;
+  public static final int FOR = 46;
+  public static final int SEMICOLON = 37;
   public static final int NOT = 24;
-  public static final int SEMICOLON = 34;
   public static final int AND = 21;
-  public static final int CARACTER = 39;
+  public static final int CARACTER = 42;
   public static final int OR = 22;
   public static final int BOOL = 6;
   public static final int DIV = 13;
-  public static final int IF = 45;
-  public static final int ID = 42;
-  public static final int DECIMAL = 37;
+  public static final int IF = 48;
+  public static final int ID = 45;
+  public static final int DECIMAL = 40;
   public static final int EOF = 0;
   public static final int EQUAL = 26;
-  public static final int TRUE = 40;
+  public static final int TRUE = 43;
   public static final int error = 1;
-  public static final int COMA = 35;
+  public static final int COMA = 38;
   public static final int MUL = 12;
-  public static final int CADENA = 38;
+  public static final int CADENA = 41;
   public static final int DIF = 27;
   public static final int MENOS = 11;
-  public static final int PAR_C = 29;
+  public static final int PAR_C = 32;
   public static final int MOD = 14;
-  public static final int PAR_A = 28;
+  public static final int PAR_A = 31;
   public static final int VOID = 9;
+  public static final int EQ = 28;
   public static final int ERROR = 2;
-  public static final int LL_C = 33;
+  public static final int LL_C = 36;
+  public static final int LL_A = 35;
+  public static final int RESTAR = 30;
   public static final int MEQ = 18;
-  public static final int LL_A = 32;
-  public static final int WHILE = 44;
+  public static final int WHILE = 47;
   public static final int MEI = 20;
   public static final int STRING = 7;
-  public static final int COR_C = 31;
+  public static final int COR_C = 34;
   public static final int INCER = 25;
-  public static final int FALSE = 41;
-  public static final int COR_A = 30;
+  public static final int FALSE = 44;
+  public static final int COR_A = 33;
   public static final int PRINT = 3;
   public static final int MAS = 10;
   public static final String[] terminalNames = new String[] {
@@ -83,6 +86,9 @@ public class ParserBugSym {
   "INCER",
   "EQUAL",
   "DIF",
+  "EQ",
+  "SUMAR",
+  "RESTAR",
   "PAR_A",
   "PAR_C",
   "COR_A",

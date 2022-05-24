@@ -16,9 +16,9 @@ import com.mycompany.modelolenguaje.Lenguaje.Almacenamiento.Scope;
 public class Declaracion extends Instruccion{
     private String id;
     private Exprecion valor;
-    private Retorno.Tipo tipo;
+    private int tipo;
     
-    public Declaracion(String id,Exprecion valor,Retorno.Tipo tipo,int linea,int columna){
+    public Declaracion(String id,Exprecion valor,int tipo,int linea,int columna){
         super(linea, columna);
         this.id = id;
         this.valor = valor;
@@ -29,7 +29,7 @@ public class Declaracion extends Instruccion{
         this.valor = valor;
     }
 
-    public void setTipo(Retorno.Tipo tipo) {
+    public void setTipo(int tipo) {
         this.tipo = tipo;
     }
     

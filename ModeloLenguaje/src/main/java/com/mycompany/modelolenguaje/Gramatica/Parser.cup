@@ -1,6 +1,18 @@
 package com.mycompany.modelolenguaje.Gramatica;
 
+import com.mycompany.modelolenguaje.Lenguaje.Abstracto.*;
+import com.mycompany.modelolenguaje.Lenguaje.Abstracto.Retorno.Tipo;
+import com.mycompany.modelolenguaje.Lenguaje.Exprecion.*;
+import com.mycompany.modelolenguaje.Lenguaje.Instrucciones.*;
+
+import com.mycompany.modelolenguaje.Lenguaje.Exprecion.Operacion.OpcionOperacion;
+import com.mycompany.modelolenguaje.Lenguaje.Exprecion.Relacional.OpcionRelacional;
+
+import com.mycompany.modelolenguaje.Lenguaje.Exprecion.Logica.OpcionLogica;
+
+
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Collections;
 import java_cup.runtime.*;
 
@@ -58,7 +70,7 @@ parser code {:
 terminal Token  ERROR;
 terminal Token  PRINT;
 terminal Token  INT,DOUBLE,BOOL,STRING,CHAR,VOID;
-terminal Token  MAS,MENOS,MUL,DIV,MOD,POT,UMINUS,MAQ,MEQ,MAI,MEI,AND,OR,XOR,NOT,INCER,EQUAL,DIF;
+terminal Token  MAS,MENOS,MUL,DIV,MOD,POT,UMINUS,MAQ,MEQ,MAI,MEI,AND,OR,XOR,NOT,INCER,EQUAL,DIF,EQ,SUMAR,RESTAR;
 terminal Token  PAR_A,PAR_C,COR_A,COR_C,LL_A,LL_C,SEMICOLON,COMA;
 terminal Token  ENTERO,DECIMAL,CADENA,CARACTER,TRUE,FALSE;
 terminal Token  ID;
@@ -66,8 +78,13 @@ terminal Token  FOR,WHILE,IF;
 
 
 /* Non terminals */
-non terminal            inicio,exp,f,tipoDato,funcion,parametros,enviar,intrucciones;
-non terminal            sentencias,instruc,print,para,si,mientras;
+non terminal                    inicio,funcion,intrucciones;
+non terminal List<Declaracion>  parametros;
+non terminal Integer            tipoDato,opPara;
+non terminal List<Exprecion>    enviar;
+non terminal Exprecion          exp,f;
+non terminal Sentencias         sentencias;
+non terminal Instruccion        instruc,print,para,si,mientras,declaracion,listaDeclaracion,asignacion;
 
 /* Precedences */
 
@@ -96,14 +113,36 @@ funcion ::= tipoDato ID PAR_A PAR_C LL_A LL_C
         |   tipoDato ID PAR_A parametros PAR_C LL_A LL_C
 ;
 
-sentencias  ::= sentencias instruc
-            |   instruc
+sentencias  ::= sentencias:se instruc:ins
+            {:
+                RESULT = se;
+                RESULT.agregarInstruccion(ins);
+            :}
+            |   instruc:ins
+            {:
+                RESULT = new Sentencias(new ArrayList<Instruccion>(), 0, 0);
+                RESULT.agregarInstruccion(ins);
+            :}
 ;
 
-instruc ::= print
-        |   para
-        |   mientras
-        |   si
+instruc ::= print:ins {: RESULT = ins;:}
+        |   para:ins {: RESULT = ins;:}
+        |   mientras:ins {: RESULT = ins;:}
+        |   si:ins {: RESULT = ins;:}
+        |   declaracion:ins {: RESULT = ins;:}
+        |   asignacion:ins {: RESULT = ins;:}
+;
+
+declaracion ::= tipoDato listaDeclaracion SEMICOLON
+;
+
+listaDeclaracion    ::= listaDeclaracion COMA ID EQ exp
+                    |   listaDeclaracion COMA ID
+                    |   ID EQ exp
+                    |   ID
+;
+
+asignacion  ::= ID EQ exp SEMICOLON
 ;
 
 si      ::= IF PAR_A exp PAR_C LL_A sentencias LL_C
@@ -114,117 +153,203 @@ mientras    ::= WHILE PAR_A exp PAR_C LL_A sentencias LL_C
             |   WHILE PAR_A exp PAR_C LL_A LL_C
 ;
 
-para    ::= FOR PAR_A PAR_C LL_A sentencias LL_C
-        |   FOR PAR_A PAR_C LL_A LL_C
+para    ::= FOR:r PAR_A INT ID:id EQ exp:e SEMICOLON exp:c SEMICOLON opPara:op PAR_C LL_A sentencias:s LL_C
+        {:
+            RESULT = new For(id.lexema, e, c, op, s, r.linea, r.columna);
+        :}
+        |   FOR:r PAR_A INT ID:id EQ exp:e SEMICOLON exp:c SEMICOLON opPara:op PAR_C LL_A LL_C
+        {:
+            RESULT = new For(id.lexema, e, c, op, null, r.linea, r.columna);
+        :}
 ;
 
-print   ::= PRINT PAR_A exp PAR_C SEMICOLON
-        |   PRINT PAR_A exp COMA enviar PAR_C SEMICOLON
+opPara  ::= SUMAR
+        {:
+            RESULT = For.SUMAR;
+        :}
+        |   RESTAR
+        {:
+            RESULT = For.RESTAR;
+        :}
 ;
 
-parametros  ::= parametros COMA tipoDato ID
-            |   tipoDato ID
+print   ::= PRINT:r PAR_A exp:e PAR_C SEMICOLON
+        {:
+            RESULT = new Print(e,new ArrayList<>(), null, r.linea, r.columna);
+        :}
+        |   PRINT:r PAR_A exp:e COMA enviar:p PAR_C SEMICOLON
+        {:
+            RESULT = new Print(e, p, null, r.linea, r.columna);
+        :}
 ;
 
-enviar  ::= enviar COMA exp
-        |   exp
+parametros  ::= parametros:r COMA tipoDato:tipo ID:id
+            {:
+                RESULT = r;
+                RESULT.add(new Declaracion(id.lexema, null, tipo, id.linea, id.columna));
+            :}
+            |   tipoDato:tipo ID:id
+            {:
+                RESULT = new ArrayList<>();
+                RESULT.add(new Declaracion(id.lexema, null, tipo, id.linea, id.columna));
+            :}
+;
+
+enviar  ::= enviar:r COMA exp:e
+        {:
+            RESULT = r;
+            RESULT.add(e);
+        :}
+        |   exp:e
+        {:
+            RESULT = new ArrayList<>();
+            RESULT.add(e);
+        :}
 ;
 
 tipoDato    ::= INT
+            {:
+                RESULT = Tipo.INT.ordinal();
+            :}
             |   STRING
+            {:
+                RESULT = Tipo.STRING.ordinal();
+            :}
             |   CHAR
+            {:
+                RESULT = Tipo.CHAR.ordinal();
+            :}
             |   DOUBLE
+            {:
+                RESULT = Tipo.DOUBLE.ordinal();
+            :}
             |   BOOL
+            {:
+                RESULT = Tipo.BOOLEAN.ordinal();
+            :}
             |   VOID
+            {:
+                RESULT = Tipo.VOID.ordinal();
+            :}
 ;
-exp     ::= MENOS exp
+exp     ::= MENOS:r exp:e2
         {:
+            Literal e1 = new Literal(-1, Tipo.INT.ordinal(), r.linea, r.columna);
+            RESULT = new Operacion(e1, e2, OpcionOperacion.MUL.ordinal(), r.linea, r.columna);
         :}
         %prec UMINUS
-        |   exp MAS exp
+        |   exp:e1 MAS:r exp:e2
         {:
+            RESULT = new Operacion(e1, e2, OpcionOperacion.SUMA.ordinal(), r.linea, r.columna);
         :}
-        |   exp MENOS exp
+        |   exp:e1 MENOS:r exp:e2
         {:
+            RESULT = new Operacion(e1, e2, OpcionOperacion.RESTA.ordinal(), r.linea, r.columna);
         :}
-        |   exp DIV exp
+        |   exp:e1 DIV:r exp:e2
         {:
+            RESULT = new Operacion(e1, e2, OpcionOperacion.DIV.ordinal(), r.linea, r.columna);
         :}
-        |   exp POT exp
+        |   exp:e1 POT:r exp:e2
         {:
+            RESULT = new Operacion(e1, e2, OpcionOperacion.POT.ordinal(), r.linea, r.columna);
         :}
-        |   exp MUL exp
+        |   exp:e1 MUL:r exp:e2
         {:
+            RESULT = new Operacion(e1, e2, OpcionOperacion.MUL.ordinal(), r.linea, r.columna);
         :}
-        |   exp MOD exp
+        |   exp:e1 MOD:r exp:e2
         {:
+            RESULT = new Operacion(e1, e2, OpcionOperacion.MOD.ordinal(), r.linea, r.columna);
         :}
-        |   exp MAQ exp
+        |   exp:e1 MAQ:r exp:e2
         {:
+            RESULT = new Relacional(e1, e2,OpcionRelacional.MAYOR.ordinal(), r.linea, r.columna);
         :}
-        |   exp MEQ exp
+        |   exp:e1 MEQ:r exp:e2
         {:
+            RESULT = new Relacional(e1, e2,OpcionRelacional.MENOR.ordinal(), r.linea, r.columna);
         :}
-        |   exp MAI exp
+        |   exp:e1 MAI:r exp:e2
         {:
+            RESULT = new Relacional(e1, e2,OpcionRelacional.MAYOR_IGUAL.ordinal(), r.linea, r.columna);
         :}
-        |   exp MEI exp
+        |   exp:e1 MEI:r exp:e2
         {:
+            RESULT = new Relacional(e1, e2,OpcionRelacional.MENOR_IGUAL.ordinal(), r.linea, r.columna);
         :}
-        |   exp DIF exp
+        |   exp:e1 DIF:r exp:e2
         {:
+            RESULT = new Relacional(e1, e2,OpcionRelacional.DIFERENTE.ordinal(), r.linea, r.columna);
         :}
-        |   exp EQUAL exp
+        |   exp:e1 EQUAL:r exp:e2
         {:
+            RESULT = new Relacional(e1, e2,OpcionRelacional.IGUAL.ordinal(), r.linea, r.columna);
         :}
-        |   exp INCER exp
+        |   exp:e1 INCER:r exp:e2
         {:
+            RESULT = new Relacional(e1, e2,OpcionRelacional.INCERTEZA.ordinal(), r.linea, r.columna);
         :}
-        |   exp OR exp
+        |   exp:e1 OR:r exp:e2
         {:
+            RESULT = new Logica(e1, e2, OpcionLogica.OR.ordinal(), r.linea, r.columna);
         :}
-        |   exp XOR exp
+        |   exp:e1 XOR:r exp:e2
         {:
+            RESULT = new Logica(e1, e2, OpcionLogica.XOR.ordinal(), r.linea, r.columna);
         :}
-        |   exp AND exp
+        |   exp:e1 AND:r exp:e2
         {:
+            RESULT = new Logica(e1, e2, OpcionLogica.AND.ordinal(), r.linea, r.columna);
         :}
-        |   NOT exp
+        |   NOT:r exp:e
         {:
+            RESULT = new Logica(e, e, OpcionLogica.NOT.ordinal(),r.linea , r.columna);
         :}
-        |   f
+        |   f:e
         {:
+            RESULT = e;
         :}
 ;
 
-f       ::= PAR_A exp PAR_C
+f       ::= PAR_A exp:e PAR_C
         {:
+            RESULT = e;
         :}
-        |   ENTERO
+        |   ENTERO:e
         {:
+            RESULT = new Literal(e.value, Tipo.INT.ordinal(), e.linea, e.columna);
         :}
-        |   DECIMAL
+        |   DECIMAL:e
         {:
+            RESULT = new Literal(e.value, Tipo.DOUBLE.ordinal(), e.linea, e.columna);
         :}
-        |   CADENA
+        |   CADENA:e
         {:
+            RESULT = new Literal(e.value, Tipo.STRING.ordinal(), e.linea, e.columna);
         :}
-        |   CARACTER
+        |   CARACTER:e
         {:
+            RESULT = new Literal(e.value, Tipo.CHAR.ordinal(), e.linea, e.columna);
         :}
-        |   TRUE
+        |   TRUE:e
         {:
+            RESULT = new Literal(e.value, Tipo.BOOLEAN.ordinal(), e.linea, e.columna);
         :}
-        |   FALSE
+        |   FALSE:e
         {:
+            RESULT = new Literal(e.value, Tipo.BOOLEAN.ordinal(), e.linea, e.columna);
         :}
-        |   ID
+        |   ID:e
         {:
+            RESULT = new Variable(e.lexema, e.linea, e.columna);
         :}
-        |   ID PAR_A PAR_C
+        |   ID:e PAR_A PAR_C
         {:
+            RESULT = new ValFuncion(e.lexema, new ArrayList<Exprecion>(), e.linea, e.columna);
         :}
-        |   ID PAR_A enviar PAR_C
+        |   ID:e PAR_A enviar:p PAR_C
         {:
+            RESULT = new ValFuncion(e.lexema, p, e.linea, e.columna);
         :}
 ;
