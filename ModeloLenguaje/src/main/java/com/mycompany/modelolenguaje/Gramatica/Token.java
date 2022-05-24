@@ -28,6 +28,6 @@ public class Token {
     
     @Override
     public String toString() {
-        return "Token [columna=" + columna + ", lexema=" + lexema + ", linea=" + linea + ", value=" + value + "]";
+        return "Token [columna=" + columna + ", linea=" + linea + ", lexema=" + lexema + ", value=" + value + "]";
     }    
 }

@@ -8,7 +8,7 @@ import java_cup.runtime.*;
 %public
 %line
 %column
-%cup
+//%cup
 
 %{
     private int stringColumnInit = 0; 
@@ -25,7 +25,9 @@ import java_cup.runtime.*;
 %}
 
 %eofval{
-    this.actual = new Token((yyline+1),(yycolumn+1),yytext(),null);
+    this.actual = new Token((yyline+1),(yycolumn+1),"EOF","EOF");
+    System.out.println(this.actual.toString());
+    throw new Error("Fin del analisis lexico");
     //return new java_cup.runtime.Symbol(ParserJavaSym.EOF,yyline+1,yycolumn+1,this.actual);
 %eofval}
 
