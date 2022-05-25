@@ -8,60 +8,72 @@ package com.mycompany.modelolenguaje.Gramatica;
 /** CUP generated class containing symbol constants. */
 public class ParserBugSym {
   /* terminals */
-  public static final int MAQ = 17;
-  public static final int POT = 15;
-  public static final int CHAR = 8;
-  public static final int MAI = 19;
-  public static final int UMINUS = 16;
-  public static final int ENTERO = 39;
-  public static final int XOR = 23;
-  public static final int DOUBLE = 5;
-  public static final int SUMAR = 29;
-  public static final int INT = 4;
-  public static final int FOR = 46;
-  public static final int SEMICOLON = 37;
-  public static final int NOT = 24;
-  public static final int AND = 21;
-  public static final int CARACTER = 42;
-  public static final int OR = 22;
-  public static final int BOOL = 6;
-  public static final int DIV = 13;
-  public static final int IF = 48;
-  public static final int ID = 45;
-  public static final int DECIMAL = 40;
+  public static final int MAQ = 20;
+  public static final int POT = 18;
+  public static final int CHAR = 11;
+  public static final int MAI = 22;
+  public static final int UMINUS = 19;
+  public static final int ENTERO = 44;
+  public static final int XOR = 26;
+  public static final int DOUBLE = 8;
+  public static final int SUMAR = 32;
+  public static final int INT = 7;
+  public static final int FOR = 51;
+  public static final int SEMICOLON = 40;
+  public static final int NOT = 27;
+  public static final int AND = 24;
+  public static final int CARACTER = 47;
+  public static final int OR = 25;
+  public static final int BOOL = 9;
+  public static final int DDOT = 43;
+  public static final int REFFILE = 5;
+  public static final int DIV = 16;
+  public static final int CONTINUAR = 56;
+  public static final int IF = 53;
+  public static final int IMPORTAR = 4;
+  public static final int ID = 50;
+  public static final int DOT = 42;
+  public static final int DECIMAL = 45;
   public static final int EOF = 0;
-  public static final int EQUAL = 26;
-  public static final int TRUE = 43;
+  public static final int RETURN = 55;
+  public static final int EQUAL = 29;
+  public static final int TRUE = 48;
   public static final int error = 1;
-  public static final int COMA = 38;
-  public static final int MUL = 12;
-  public static final int CADENA = 41;
-  public static final int DIF = 27;
-  public static final int MENOS = 11;
-  public static final int PAR_C = 32;
-  public static final int MOD = 14;
-  public static final int PAR_A = 31;
-  public static final int VOID = 9;
-  public static final int EQ = 28;
+  public static final int COMA = 41;
+  public static final int MUL = 15;
+  public static final int CADENA = 46;
+  public static final int DIF = 30;
+  public static final int MENOS = 14;
+  public static final int PAR_C = 35;
+  public static final int MOD = 17;
+  public static final int BREAK = 57;
+  public static final int PAR_A = 34;
+  public static final int VOID = 12;
+  public static final int EQ = 31;
   public static final int ERROR = 2;
-  public static final int LL_C = 36;
-  public static final int LL_A = 35;
-  public static final int RESTAR = 30;
-  public static final int MEQ = 18;
-  public static final int WHILE = 47;
-  public static final int MEI = 20;
-  public static final int STRING = 7;
-  public static final int COR_C = 34;
-  public static final int INCER = 25;
-  public static final int FALSE = 44;
-  public static final int COR_A = 33;
+  public static final int LL_C = 39;
+  public static final int ELSE = 54;
+  public static final int LL_A = 38;
+  public static final int RESTAR = 33;
+  public static final int MEQ = 21;
+  public static final int WHILE = 52;
+  public static final int MEI = 23;
+  public static final int STRING = 10;
+  public static final int COR_C = 37;
+  public static final int INCER = 28;
+  public static final int FALSE = 49;
+  public static final int COR_A = 36;
   public static final int PRINT = 3;
-  public static final int MAS = 10;
+  public static final int INCERTEZA = 6;
+  public static final int MAS = 13;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
   "ERROR",
   "PRINT",
+  "IMPORTAR",
+  "REFFILE",
+  "INCERTEZA",
   "INT",
   "DOUBLE",
   "BOOL",
@@ -97,6 +109,8 @@ public class ParserBugSym {
   "LL_C",
   "SEMICOLON",
   "COMA",
+  "DOT",
+  "DDOT",
   "ENTERO",
   "DECIMAL",
   "CADENA",
@@ -106,7 +120,11 @@ public class ParserBugSym {
   "ID",
   "FOR",
   "WHILE",
-  "IF"
+  "IF",
+  "ELSE",
+  "RETURN",
+  "CONTINUAR",
+  "BREAK"
   };
 }
 

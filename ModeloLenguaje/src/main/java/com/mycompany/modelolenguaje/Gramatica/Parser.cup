@@ -61,6 +61,12 @@ parser code {:
     private void semantic_error(Token token,String contexto) {
 
     }
+
+    private void asignarTipoDatoDeclaracion(List<Declaracion> lista,int tipo){
+      for (Declaracion declaracion : lista) {
+        declaracion.setTipo(tipo);
+      }
+    }
 :}
 
 /* define how to connect to the scanner! */
@@ -69,22 +75,24 @@ parser code {:
 /* Terminals (tokens returned by the scanner). */
 terminal Token  ERROR;
 terminal Token  PRINT;
+terminal Token  IMPORTAR,REFFILE,INCERTEZA;
 terminal Token  INT,DOUBLE,BOOL,STRING,CHAR,VOID;
 terminal Token  MAS,MENOS,MUL,DIV,MOD,POT,UMINUS,MAQ,MEQ,MAI,MEI,AND,OR,XOR,NOT,INCER,EQUAL,DIF,EQ,SUMAR,RESTAR;
-terminal Token  PAR_A,PAR_C,COR_A,COR_C,LL_A,LL_C,SEMICOLON,COMA;
+terminal Token  PAR_A,PAR_C,COR_A,COR_C,LL_A,LL_C,SEMICOLON,COMA,DOT,DDOT;
 terminal Token  ENTERO,DECIMAL,CADENA,CARACTER,TRUE,FALSE;
 terminal Token  ID;
-terminal Token  FOR,WHILE,IF;
+terminal Token  FOR,WHILE,IF,ELSE;
+terminal Token  RETURN,CONTINUAR,BREAK;
 
 
 /* Non terminals */
-non terminal                    inicio,funcion,intrucciones;
-non terminal List<Declaracion>  parametros;
+non terminal                    inicio,intrucciones;
+non terminal List<Declaracion>  parametros,listaDeclaracion;
 non terminal Integer            tipoDato,opPara;
 non terminal List<Exprecion>    enviar;
 non terminal Exprecion          exp,f;
 non terminal Sentencias         sentencias;
-non terminal Instruccion        instruc,print,para,si,mientras,declaracion,listaDeclaracion,asignacion;
+non terminal Instruccion        instruc,print,para,si,mientras,declaracion,asignacion,funcion,globales;
 
 /* Precedences */
 
@@ -104,8 +112,15 @@ precedence left     NOT;
 inicio    ::= intrucciones
 ;
 
-intrucciones    ::= intrucciones funcion
-                |   funcion
+intrucciones    ::= intrucciones globales
+                |   globales
+;
+
+globales    ::= funcion:d {:RESULT = d;:}
+            |   declaracion:d {:RESULT = d;:}
+            |   asignacion:d {:RESULT = d;:}
+            |   INCERTEZA:r DECIMAL:val SEMICOLON {:RESULT = new Incerteza(r.linea, r.columna, (double) val.value);:}
+            |   IMPORTAR:r REFFILE:id SEMICOLON {:RESULT = new Importar(id.lexema, r.linea, r.columna);:}
 ;
 
 funcion ::= tipoDato ID PAR_A PAR_C LL_A LL_C
@@ -131,26 +146,63 @@ instruc ::= print:ins {: RESULT = ins;:}
         |   si:ins {: RESULT = ins;:}
         |   declaracion:ins {: RESULT = ins;:}
         |   asignacion:ins {: RESULT = ins;:}
+        |   CONTINUAR:r SEMICOLON   {:RESULT = new Continuar(r.linea, r.columna);:}
+        |   BREAK:r SEMICOLON {:RESULT = new Detener(r.linea, r.columna);:}
+        |   RETURN:r exp:e SEMICOLON {:RESULT = new Return(e, r.linea, r.columna);:}
 ;
 
-declaracion ::= tipoDato listaDeclaracion SEMICOLON
+declaracion ::= tipoDato:tipo listaDeclaracion:lista SEMICOLON
+            {:
+                asignarTipoDatoDeclaracion(lista,tipo);
+            :}
 ;
 
-listaDeclaracion    ::= listaDeclaracion COMA ID EQ exp
-                    |   listaDeclaracion COMA ID
-                    |   ID EQ exp
-                    |   ID
+listaDeclaracion    ::= listaDeclaracion:l COMA ID:id EQ exp:e
+                    {:
+                        RESULT = l;
+                        RESULT.add(new Declaracion(id.lexema, e, Tipo.ERROR.ordinal(), id.linea, id.columna));
+                    :}
+                    |   listaDeclaracion:l COMA ID:id
+                    {:
+                        RESULT = l;
+                        RESULT.add(new Declaracion(id.lexema, null, Tipo.ERROR.ordinal(), id.linea, id.columna));
+                    :}
+                    |   ID:id EQ exp:e
+                    {:
+                        RESULT = new ArrayList<>();
+                        RESULT.add(new Declaracion(id.lexema, e, Tipo.ERROR.ordinal(), id.linea, id.columna));
+                    :}
+                    |   ID:id
+                    {:
+                        RESULT = new ArrayList<>();
+                        RESULT.add(new Declaracion(id.lexema, null, Tipo.ERROR.ordinal(), id.linea, id.columna));
+                    :}
 ;
 
-asignacion  ::= ID EQ exp SEMICOLON
+asignacion  ::= ID:id EQ exp:e SEMICOLON
+            {:
+                RESULT = new Asignacion(id.lexema,e,id.linea,id.columna);
+            :}
 ;
 
-si      ::= IF PAR_A exp PAR_C LL_A sentencias LL_C
-        |   IF PAR_A exp PAR_C LL_A LL_C
+si      ::= IF:r PAR_A exp:e PAR_C LL_A sentencias:s LL_C
+        {:
+            RESULT = new If(e, s, null , r.linea, r.columna);
+        :}
+        |   IF:r PAR_A exp:e PAR_C LL_A LL_C
+        {:
+            RESULT = new If(e, null, null , r.linea, r.columna);
+        :}
 ;
 
-mientras    ::= WHILE PAR_A exp PAR_C LL_A sentencias LL_C
-            |   WHILE PAR_A exp PAR_C LL_A LL_C
+mientras    ::= WHILE:r PAR_A exp:e PAR_C LL_A sentencias:s LL_C
+            {:
+                RESULT = new While(e, s, r.linea, r.columna);
+            :}
+            |   WHILE:r PAR_A exp:e PAR_C LL_A LL_C
+            {:
+                RESULT = new While(e, null, r.linea, r.columna);
+            :}
 ;
 
 para    ::= FOR:r PAR_A INT ID:id EQ exp:e SEMICOLON exp:c SEMICOLON opPara:op PAR_C LL_A sentencias:s LL_C
