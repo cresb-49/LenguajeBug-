@@ -85,7 +85,9 @@ public class MainFrame extends javax.swing.JFrame {
         LexerBug lexerBug = new LexerBug(new StringReader(this.jTextArea1.getText()));
         ParserBug parserBug = new ParserBug(lexerBug);
         try {
+            System.out.println("--------------------------< Inicio >--------------------------");
             parserBug.parse();
+            System.out.println("----------------------------<  Fin  >-------------------------");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
