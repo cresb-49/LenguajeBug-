@@ -19,7 +19,6 @@ public class ParserBugSym {
   public static final int SUMAR = 32;
   public static final int INT = 7;
   public static final int FOR = 51;
-  public static final int SEMICOLON = 40;
   public static final int NOT = 27;
   public static final int AND = 24;
   public static final int CARACTER = 47;
@@ -33,6 +32,7 @@ public class ParserBugSym {
   public static final int IMPORTAR = 4;
   public static final int ID = 50;
   public static final int DOT = 42;
+  public static final int PUNTO_COMA = 40;
   public static final int DECIMAL = 45;
   public static final int EOF = 0;
   public static final int RETURN = 55;
@@ -107,7 +107,7 @@ public class ParserBugSym {
   "COR_C",
   "LL_A",
   "LL_C",
-  "SEMICOLON",
+  "PUNTO_COMA",
   "COMA",
   "DOT",
   "DDOT",

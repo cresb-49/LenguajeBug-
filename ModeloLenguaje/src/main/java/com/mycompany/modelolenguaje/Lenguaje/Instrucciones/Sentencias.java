@@ -29,7 +29,7 @@ public class Sentencias extends Instruccion{
 
     @Override
     public void agregarInstruccion(Instruccion instruccion) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        this.instrucciones.add(instruccion);
     }
     
 }

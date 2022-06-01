@@ -27,6 +27,10 @@ parser code {:
     public ParserBug (LexerBug lexerBug){ 
         super(lexerBug);
     }
+    
+    protected int error_sync_size() {
+		return 1;
+	}
 
     public void report_error(String message, Object info) {
         System.out.println("public void report_error");
@@ -40,21 +44,26 @@ parser code {:
         Token tok = (Token) cur_token.value;
         if(tok!=null){
             if (cur_token.sym == ParserBugSym.EOF) {
-                String er = "Simbolo inesperado, se esperaba: "+ simbolosTerminalesBug.obtenerSimbolos(expected_token_ids()).toString();
+                String er = "Simbolo inesperado \""+tok.lexema+"\", Linea: "+tok.linea+", Columna: "+tok.columna+", se esperaba: "+ simbolosTerminalesBug.obtenerSimbolos(expected_token_ids()).toString();
+                System.out.println(er);
             } else {
-                String er = "Simbolo inesperado, se esperaba: "+ simbolosTerminalesBug.obtenerSimbolos(expected_token_ids()).toString();
+                String er = "Simbolo inesperado \""+tok.lexema+"\", Linea: "+tok.linea+", Columna: "+tok.columna+", se esperaba: "+ simbolosTerminalesBug.obtenerSimbolos(expected_token_ids()).toString();
+                System.out.println(er);
             }
         }else{
-            String er = "Simbolo inesperado, se esperaba: "+ simbolosTerminalesBug.obtenerSimbolos(expected_token_ids()).toString();
+            String er = "Simbolo inesperado \""+tok.lexema+"\", Linea: "+tok.linea+", Columna: "+tok.columna+", se esperaba: "+ simbolosTerminalesBug.obtenerSimbolos(expected_token_ids()).toString();
+            System.out.println(er);
         }
     }
 
     public void unrecovered_syntax_error(Symbol cur_token) {
+        Token tok = (Token) cur_token.value;
         if (cur_token.sym == ParserBugSym.EOF) {
             String er = "Error irrecuperable se llego al final del archivo";
+            System.out.println(er);
         } else {
-            Token tok = (Token) cur_token.value;
             String er = "Error irrecuperable resuelva el error anterior";
+            System.out.println(er);
         }
     }
 
@@ -67,6 +76,8 @@ parser code {:
         declaracion.setTipo(tipo);
       }
     }
+
+
 :}
 
 /* define how to connect to the scanner! */
@@ -78,7 +89,7 @@ terminal Token  PRINT;
 terminal Token  IMPORTAR,REFFILE,INCERTEZA;
 terminal Token  INT,DOUBLE,BOOL,STRING,CHAR,VOID;
 terminal Token  MAS,MENOS,MUL,DIV,MOD,POT,UMINUS,MAQ,MEQ,MAI,MEI,AND,OR,XOR,NOT,INCER,EQUAL,DIF,EQ,SUMAR,RESTAR;
-terminal Token  PAR_A,PAR_C,COR_A,COR_C,LL_A,LL_C,SEMICOLON,COMA,DOT,DDOT;
+terminal Token  PAR_A,PAR_C,COR_A,COR_C,LL_A,LL_C,PUNTO_COMA,COMA,DOT,DDOT;
 terminal Token  ENTERO,DECIMAL,CADENA,CARACTER,TRUE,FALSE;
 terminal Token  ID;
 terminal Token  FOR,WHILE,IF,ELSE;
@@ -92,7 +103,7 @@ non terminal Integer            tipoDato,opPara;
 non terminal List<Exprecion>    enviar;
 non terminal Exprecion          exp,f;
 non terminal Sentencias         sentencias;
-non terminal Instruccion        instruc,print,para,si,mientras,declaracion,asignacion,funcion,globales;
+non terminal Instruccion        instruc,print,para,si,mientras,declaracion,asignacion,funcion,globales,importar,incerteza;
 
 /* Precedences */
 
@@ -119,13 +130,21 @@ intrucciones    ::= intrucciones globales
 globales    ::= funcion:d {:RESULT = d;:}
             |   declaracion:d {:RESULT = d;:}
             |   asignacion:d {:RESULT = d;:}
-            |   INCERTEZA:r DECIMAL:val SEMICOLON {:RESULT = new Incerteza(r.linea, r.columna, (double) val.value);:}
-            |   IMPORTAR:r REFFILE:id SEMICOLON {:RESULT = new Importar(id.lexema, r.linea, r.columna);:}
+            |   incerteza:d {:RESULT = d;:}
+            |   importar:d {:RESULT = d;:}
+            |   error
+;
+
+incerteza   ::= INCERTEZA:r DECIMAL:val PUNTO_COMA {:RESULT = new Incerteza(r.linea, r.columna, (double) val.value);:}
+;
+
+importar    ::= IMPORTAR:r REFFILE:id PUNTO_COMA {:RESULT = new Importar(id.lexema, r.linea, r.columna);:}
 ;
 
 funcion ::= tipoDato ID PAR_A PAR_C LL_A LL_C
         |   tipoDato ID PAR_A PAR_C LL_A sentencias LL_C
         |   tipoDato ID PAR_A parametros PAR_C LL_A LL_C
+        |   tipoDato ID PAR_A parametros PAR_C LL_A sentencias LL_C
 ;
 
 sentencias  ::= sentencias:se instruc:ins
@@ -146,12 +165,13 @@ instruc ::= print:ins {: RESULT = ins;:}
         |   si:ins {: RESULT = ins;:}
         |   declaracion:ins {: RESULT = ins;:}
         |   asignacion:ins {: RESULT = ins;:}
-        |   CONTINUAR:r SEMICOLON   {:RESULT = new Continuar(r.linea, r.columna);:}
-        |   BREAK:r SEMICOLON {:RESULT = new Detener(r.linea, r.columna);:}
-        |   RETURN:r exp:e SEMICOLON {:RESULT = new Return(e, r.linea, r.columna);:}
+        |   CONTINUAR:r PUNTO_COMA   {:RESULT = new Continuar(r.linea, r.columna);:}
+        |   BREAK:r PUNTO_COMA {:RESULT = new Detener(r.linea, r.columna);:}
+        |   RETURN:r exp:e PUNTO_COMA {:RESULT = new Return(e, r.linea, r.columna);:}
+        |   error
 ;
 
-declaracion ::= tipoDato:tipo listaDeclaracion:lista SEMICOLON
+declaracion ::= tipoDato:tipo listaDeclaracion:lista PUNTO_COMA
             {:
                 asignarTipoDatoDeclaracion(lista,tipo);
             :}
@@ -179,7 +199,7 @@ listaDeclaracion    ::= listaDeclaracion:l COMA ID:id EQ exp:e
                     :}
 ;
 
-asignacion  ::= ID:id EQ exp:e SEMICOLON
+asignacion  ::= ID:id EQ exp:e PUNTO_COMA
             {:
                 RESULT = new Asignacion(id.lexema,e,id.linea,id.columna);
             :}
@@ -205,11 +225,11 @@ mientras    ::= WHILE:r PAR_A exp:e PAR_C LL_A sentencias:s LL_C
             :}
 ;
 
-para    ::= FOR:r PAR_A INT ID:id EQ exp:e SEMICOLON exp:c SEMICOLON opPara:op PAR_C LL_A sentencias:s LL_C
+para    ::= FOR:r PAR_A INT ID:id EQ exp:e PUNTO_COMA exp:c PUNTO_COMA opPara:op PAR_C LL_A sentencias:s LL_C
         {:
             RESULT = new For(id.lexema, e, c, op, s, r.linea, r.columna);
         :}
-        |   FOR:r PAR_A INT ID:id EQ exp:e SEMICOLON exp:c SEMICOLON opPara:op PAR_C LL_A LL_C
+        |   FOR:r PAR_A INT ID:id EQ exp:e PUNTO_COMA exp:c PUNTO_COMA opPara:op PAR_C LL_A LL_C
         {:
             RESULT = new For(id.lexema, e, c, op, null, r.linea, r.columna);
         :}
@@ -225,11 +245,11 @@ opPara  ::= SUMAR
         :}
 ;
 
-print   ::= PRINT:r PAR_A exp:e PAR_C SEMICOLON
+print   ::= PRINT:r PAR_A exp:e PAR_C PUNTO_COMA
         {:
             RESULT = new Print(e,new ArrayList<>(), null, r.linea, r.columna);
         :}
-        |   PRINT:r PAR_A exp:e COMA enviar:p PAR_C SEMICOLON
+        |   PRINT:r PAR_A exp:e COMA enviar:p PAR_C PUNTO_COMA
         {:
             RESULT = new Print(e, p, null, r.linea, r.columna);
         :}
