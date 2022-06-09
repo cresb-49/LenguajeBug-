@@ -77,7 +77,9 @@ parser code {:
       }
     }
 
-
+    private Instruccion inicializarFuncion(Integer tipo, Token id, List<Declaracion> params, Sentencias sen,int linea,int columna) {
+        return new Funcion(tipo,id.lexema, sen, params,linea,columna);
+    }
 :}
 
 /* define how to connect to the scanner! */
@@ -120,11 +122,11 @@ precedence left     NOT;
 
 /* Inicio de las reglas gramticales*/
 
-inicio    ::= intrucciones
+inicio    ::= intrucciones:intrucciones {::}
 ;
 
-intrucciones    ::= intrucciones globales
-                |   globales
+intrucciones    ::= intrucciones globales:globales  {:System.out.println(globales.toString());:}
+                |   globales:globales   {:System.out.println(globales.toString());:}
 ;
 
 globales    ::= funcion:d {:RESULT = d;:}
@@ -141,10 +143,10 @@ incerteza   ::= INCERTEZA:r DECIMAL:val PUNTO_COMA {:RESULT = new Incerteza(r.li
 importar    ::= IMPORTAR:r REFFILE:id PUNTO_COMA {:RESULT = new Importar(id.lexema, r.linea, r.columna);:}
 ;
 
-funcion ::= tipoDato ID PAR_A PAR_C LL_A LL_C
-        |   tipoDato ID PAR_A PAR_C LL_A sentencias LL_C
-        |   tipoDato ID PAR_A parametros PAR_C LL_A LL_C
-        |   tipoDato ID PAR_A parametros PAR_C LL_A sentencias LL_C
+funcion ::= tipoDato:tipo ID:id PAR_A PAR_C LL_A LL_C   {:RESULT = inicializarFuncion(tipo,id,null,null,id.linea,id.columna);:}
+        |   tipoDato:tipo ID:id PAR_A PAR_C LL_A sentencias:sen LL_C    {:RESULT = inicializarFuncion(tipo,id,null,sen,id.linea,id.columna);:}
+        |   tipoDato:tipo ID:id PAR_A parametros:params PAR_C LL_A LL_C    {:RESULT = inicializarFuncion(tipo,id,params,null,id.linea,id.columna);:}
+        |   tipoDato:tipo ID:id PAR_A parametros:params PAR_C LL_A sentencias:sen LL_C {:RESULT = inicializarFuncion(tipo,id,params,sen,id.linea,id.columna);:}
 ;
 
 sentencias  ::= sentencias:se instruc:ins

@@ -24,23 +24,19 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane1" max="32767" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-          </Group>
-          <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="237" max="-2" attributes="0"/>
               <Component id="jButton1" min="-2" pref="167" max="-2" attributes="0"/>
               <EmptySpace pref="248" max="32767" attributes="0"/>
           </Group>
+          <Component id="jScrollPane1" alignment="1" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
               <Component id="jScrollPane1" pref="316" max="32767" attributes="0"/>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Component id="jButton1" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="71" max="-2" attributes="0"/>
           </Group>
@@ -63,7 +59,7 @@
             </Property>
             <Property name="rows" type="int" value="5"/>
             <Property name="tabSize" type="int" value="2"/>
-            <Property name="text" type="java.lang.String" value="import hola.bug&#xa;import hola1.bug&#xa;&#xa;void main(){&#xa;&#x9;string hola = &quot;hola como estas&quot;;&#xa;&#x9;int val = 4.3;&#xa;&#x9;int val2 = 4;&#xa;&#x9;char c = &apos;2&apos;;&#xa;&#x9;boolean bandera1 = true;&#xa;&#x9;boolean bandera2 = false;&#xa;}&#xa;&#xa;int funcion1(int h1,int h2,int h3){&#xa;&#x9;print(&quot;Valor 1: {0} ,valor 2: {1} ,valor 3: {2}&quot;,h1,h2,h3);&#xa;&#x9;for(int x=1;x&lt;h1;++){&#xa;&#x9;&#x9;print(&quot;Hola como estas {0}&quot;,x);&#xa;&#x9;}&#xa;&#x9;return 4;&#x9;&#xa;}&#xa;&#xa;void funcion2(){&#xa;&#x9;if(true){&#xa;&#x9;&#x9;print(&quot;Hola como estas&quot;);&#xa;&#x9;}&#xa;}&#xa;&#xa;void funcion3(int val){&#xa;&#x9;int cont = 0;&#xa;&#x9;while(cont &lt;= val){&#xa;&#x9;&#x9;if(cont == 2){&#xa;&#x9;&#x9;&#x9;break;&#xa;&#x9;&#x9;}&#xa;&#x9;}&#xa;}"/>
+            <Property name="text" type="java.lang.String" value="import hola.bug;&#xa;import hola1.bug;&#xa;&#xa;void main(){&#xa;&#x9;string hola = &quot;hola como estas&quot;;&#xa;&#x9;int val = 4.3;&#xa;&#x9;int val2 = 4;&#xa;&#x9;char c = &apos;2&apos;;&#xa;&#x9;boolean bandera1 = true;&#xa;&#x9;boolean bandera2 = false;&#xa;}&#xa;&#xa;int funcion1(int h1,int h2,int h3){&#xa;&#x9;print(&quot;Valor 1: {0} ,valor 2: {1} ,valor 3: {2}&quot;,h1,h2,h3);&#xa;&#x9;for(int x=1;x&lt;h1;++){&#xa;&#x9;&#x9;print(&quot;Hola como estas {0}&quot;,x);&#xa;&#x9;}&#xa;&#x9;return 4;&#x9;&#xa;}&#xa;&#xa;void funcion2(){&#xa;&#x9;if(true){&#xa;&#x9;&#x9;print(&quot;Hola como estas&quot;);&#xa;&#x9;}&#xa;}&#xa;&#xa;void funcion3(int val){&#xa;&#x9;int cont = 0;&#xa;&#x9;while(cont &lt;= val){&#xa;&#x9;&#x9;if(cont == 2){&#xa;&#x9;&#x9;&#x9;break;&#xa;&#x9;&#x9;}&#xa;&#x9;}&#xa;}"/>
           </Properties>
         </Component>
       </SubComponents>

@@ -45,7 +45,7 @@ public class MainFrame extends javax.swing.JFrame {
         jTextArea1.setFont(new java.awt.Font("Bahnschrift", 0, 16)); // NOI18N
         jTextArea1.setRows(5);
         jTextArea1.setTabSize(2);
-        jTextArea1.setText("import hola.bug\nimport hola1.bug\n\nvoid main(){\n\tstring hola = \"hola como estas\";\n\tint val = 4.3;\n\tint val2 = 4;\n\tchar c = '2';\n\tboolean bandera1 = true;\n\tboolean bandera2 = false;\n}\n\nint funcion1(int h1,int h2,int h3){\n\tprint(\"Valor 1: {0} ,valor 2: {1} ,valor 3: {2}\",h1,h2,h3);\n\tfor(int x=1;x<h1;++){\n\t\tprint(\"Hola como estas {0}\",x);\n\t}\n\treturn 4;\t\n}\n\nvoid funcion2(){\n\tif(true){\n\t\tprint(\"Hola como estas\");\n\t}\n}\n\nvoid funcion3(int val){\n\tint cont = 0;\n\twhile(cont <= val){\n\t\tif(cont == 2){\n\t\t\tbreak;\n\t\t}\n\t}\n}");
+        jTextArea1.setText("import hola.bug;\nimport hola1.bug;\n\nvoid main(){\n\tstring hola = \"hola como estas\";\n\tint val = 4.3;\n\tint val2 = 4;\n\tchar c = '2';\n\tboolean bandera1 = true;\n\tboolean bandera2 = false;\n}\n\nint funcion1(int h1,int h2,int h3){\n\tprint(\"Valor 1: {0} ,valor 2: {1} ,valor 3: {2}\",h1,h2,h3);\n\tfor(int x=1;x<h1;++){\n\t\tprint(\"Hola como estas {0}\",x);\n\t}\n\treturn 4;\t\n}\n\nvoid funcion2(){\n\tif(true){\n\t\tprint(\"Hola como estas\");\n\t}\n}\n\nvoid funcion3(int val){\n\tint cont = 0;\n\twhile(cont <= val){\n\t\tif(cont == 2){\n\t\t\tbreak;\n\t\t}\n\t}\n}");
         jScrollPane1.setViewportView(jTextArea1);
 
         jButton1.setText("jButton1");
@@ -60,20 +60,17 @@ public class MainFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1)
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
                 .addGap(237, 237, 237)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(248, Short.MAX_VALUE))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(12, 12, 12)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
                 .addGap(71, 71, 71))
         );
