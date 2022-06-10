@@ -32,5 +32,10 @@ public class Incerteza extends Instruccion{
     public void agregarInstruccion(Instruccion instruccion) {
         // TODO Auto-generated method stub
     }
+
+    @Override
+    public String toString() {
+        return "Incerteza{" + "valor=" + valor + '}';
+    }
     
 }

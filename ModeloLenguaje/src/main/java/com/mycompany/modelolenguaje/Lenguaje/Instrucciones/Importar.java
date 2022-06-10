@@ -12,6 +12,7 @@ public class Importar extends Instruccion{
 
     public Importar(String id,int linea, int columna) {
         super(linea, columna);
+        this.id = id;
     }
 
     public String getId() {
@@ -31,6 +32,11 @@ public class Importar extends Instruccion{
     @Override
     public void agregarInstruccion(Instruccion instruccion) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String toString() {
+        return "Importar{" + "id=" + id + '}';
     }
     
 }

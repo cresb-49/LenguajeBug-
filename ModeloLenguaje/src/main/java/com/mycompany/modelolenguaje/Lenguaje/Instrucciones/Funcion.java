@@ -22,7 +22,10 @@ public class Funcion extends Instruccion{
         this.sentencias = sentencias;
         this.parametros = parametros;
     }
-    
+
+    public String getId() {
+        return id;
+    }
     
     @Override
     public Object ejecutar(Scope scope) {
@@ -37,6 +40,11 @@ public class Funcion extends Instruccion{
     @Override
     public void agregarInstruccion(Instruccion instruccion) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String toString() {
+        return "Funcion{" + "tipo=" + tipo + ", id=" + id + ", parametros=" + parametros + '}';
     }
     
 }
